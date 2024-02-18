@@ -1,0 +1,153 @@
+html {
+    box-sizing: border-box;
+    font-size: 16px;
+    height: 100%;
+}
+  
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+    margin: 0;
+    padding: 0;
+}
+
+ol, ul {
+    list-style: none; 
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2 {
+    width: fit-content;
+    margin: auto; 
+    padding: 20px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height:100%;
+    background-color: #22092C;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    color:white
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.calculator-container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    width: 400px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1.5rem;
+    border: 2px solid #f05841;
+    box-shadow: 0px 25px 80px rgba(0, 0, 0, 0.5);
+}
+@media only screen and (max-width: 420px) {
+    /* For smaller mobile phones: */
+    .calculator-container {
+        height: 500px;
+        width: 300px;
+    }
+    
+}
+
+.display-section {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    padding: 1rem;
+    height: 170px;
+}
+
+#display-text {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#display-text span {
+    margin-top: auto;
+}
+
+.operations-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-top: 1px solid rgb(221, 221, 221);
+    gap: 6px;
+    padding: 6px;
+}
+
+.operations-section .row {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+}
+
+button {
+    padding: 0px;
+    flex-grow: 1;
+    flex-basis: 0;
+    border-style: none;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.5rem;
+    background-color: white;
+    border-radius: 8px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+button:focus {
+    cursor: pointer;
+}
+
+button:active {
+    background-color: rgb(240, 240, 240);
+}
+
+#equal-sign {
+    flex-grow: 2;
+    background-color: #F05941;
+    color: white;
+}
+
+#equal-sign:active {
+    background-color: #d4513d;
+}
+
+.operation {
+    color: #F05941;
+}
+
+

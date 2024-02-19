@@ -70,10 +70,10 @@ main {
     box-shadow: 0px 25px 80px rgba(0, 0, 0, 0.5);
 }
 @media only screen and (max-width: 420px) {
-    /* For smaller mobile phones: */
+    /* for mobile phones: */
     .calculator-container {
-        height: 500px;
-        width: 300px;
+        height: 550px;
+        width: 350px;
     }
     
 }

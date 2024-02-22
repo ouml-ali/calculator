@@ -1,4 +1,10 @@
-const numbersRegex = /[0-9]+/;
+const MAX_CHARACTERS = 60;
+const SECONDARY_COLOR = 'grey';
+const SMALL_FONT_SIZE = '1rem';
+const MEDIUM_FONT_SIZE = '2rem';
+const LARGE_FONT_SIZE = '3rem';
+
+const numbersRegex = /[0-9\.]+/;
 const operatorsRegex = /(×|÷|-|\+)/;    
 const operatorsPrecedence = {
     '+': 0,
@@ -7,18 +13,27 @@ const operatorsPrecedence = {
     '×': 1
 };
 
-
 let infixExpression = '0';
 let result = '';
 let emptyDisplay = true;
+let canAppendDot = true;
 
 const displayContainer = document.getElementById("expression");
 const displayResultContainer = document.getElementById("result");
 const buttons = document.querySelectorAll('button');
+const dotButton = document.getElementById('dot');
 
 
 displayContainer.textContent = infixExpression;
-buttons.forEach((button) => button.addEventListener('click', handleClickedButton));
+displayContainer.style.fontSize = MEDIUM_FONT_SIZE;
+displayResultContainer.style.color = SECONDARY_COLOR;
+buttons.forEach((button) => {
+    if (button.id !== 'delete-btn') {
+        button.addEventListener('click', handleClickedButton);
+    } else {
+        button.addEventListener('click', deleteExpression);
+    }
+});
 
 
 
@@ -28,24 +43,49 @@ buttons.forEach((button) => button.addEventListener('click', handleClickedButton
 function handleClickedButton(event) {
     const input = this.textContent;
     switch(input) {
-        case '=': result = operate(); displayResult(); break;
-        case '%': break;
-        case '.' : break;
+        case '=': operate(); displayFinalResult();  break;
+        case '%':  displayPercentage(); break;
         case 'AC': resetCalculator(); break;
-        default:  processAndDisplayInput(input); break;
+        default:  processAndDisplayInput(input); 
+                  if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
+                    operate(); 
+                  } 
+                  displayResult();
+                  break;
     }    
 }
 
 
 function processAndDisplayInput(input) {
-    // TO DO replace or remove duplicate operator
-    if(result) { resetCalculator(); }
+
     if(emptyDisplay) {
         infixExpression = '';
+        resetDisplayTextStyle();
         emptyDisplay = false;
     }
-    infixExpression += input;
-    displayContainer.textContent = infixExpression;
+
+    if (infixExpression.length <= MAX_CHARACTERS) {
+
+        let lastIndex = infixExpression.length - 1;
+
+        // to replace operators if there is two operators in a row
+        if (input.match(operatorsRegex) ) {
+            dotButton.disabled = false;
+            if (infixExpression.length > 0 && infixExpression[lastIndex].match(operatorsRegex)) {
+                infixExpression = infixExpression.slice(0,lastIndex) + input;
+            } else {
+                infixExpression += input;
+            }
+        } else if (input === '.') {
+            dotButton.disabled = true;
+            infixExpression += input;
+        } else {
+            infixExpression += input
+        }
+        
+        displayContainer.textContent = infixExpression;
+    }
+        
     
 }
 
@@ -57,7 +97,6 @@ function convertToPostfixExpression(infixExpression) {
         if(splittedInfixExpression[i].match(numbersRegex)) {
             postfixExpression += splittedInfixExpression[i];
         } else if (splittedInfixExpression[i].match(operatorsRegex)) {
-    
             // space is for speration when evaluating the expression
             postfixExpression += ' ';
             let peekIndex = operatorStack.length - 1;
@@ -86,7 +125,7 @@ function convertToPostfixExpression(infixExpression) {
 }
 
 function operate() {
-
+    
     let postfixExpression = convertToPostfixExpression(infixExpression);
 
     // evaluate the postfix expression
@@ -101,15 +140,49 @@ function operate() {
             default : operationStack.push(postfixExpArray[i]); break;
         }
     }
-    return operationStack.pop();
+    result = operationStack.pop();
+    
+    
 }
 
 function displayResult() {
-    displayResultContainer.textContent = "=" + result;
+    if(! isNaN(result)) {
+        displayResultContainer.textContent = "= " + result;
+    }    
+}
+
+function displayPercentage() {
+    displayContainer.textContent = result + "%";
+    result = percentage(result);
+    emptyDisplay = true;
+    displayContainer.style.fontSize = SMALL_FONT_SIZE;
+    displayResultContainer.textContent = "= " + result;
+    displayResultContainer.style.fontSize = LARGE_FONT_SIZE;
+    displayResultContainer.style.color = 'black';
+}
+
+function displayFinalResult() {
+    if(! isNaN(result)) {
+        emptyDisplay = true;
+        displayContainer.style.fontSize = SMALL_FONT_SIZE;
+        displayResultContainer.textContent = "= " + result;
+        displayResultContainer.style.fontSize = LARGE_FONT_SIZE;
+        displayResultContainer.style.color = 'black';
+    }    
 }
 
 function deleteExpression() {
-
+    if(!emptyDisplay) {
+        infixExpression = infixExpression.substring(0, infixExpression.length - 1);
+        if (infixExpression.length === 0) {
+            resetCalculator();
+        } else {
+            processAndDisplayInput(''); 
+            operate();
+            displayResult();
+        }
+        
+    }
 }
 
 function resetCalculator() {
@@ -118,8 +191,14 @@ function resetCalculator() {
     emptyDisplay = true;
     displayContainer.textContent = '0';
     displayResultContainer.textContent = "";
+    resetDisplayTextStyle();
 }
 
+function resetDisplayTextStyle() {
+    displayContainer.style.fontSize = MEDIUM_FONT_SIZE;
+    displayResultContainer.style.fontSize = SMALL_FONT_SIZE;
+    displayResultContainer.style.color = SECONDARY_COLOR;
+}
 /*****************************************************************************************************/
 
 /************************************* OPERATIONS FUNCTIONS*******************************************/
@@ -134,7 +213,7 @@ function multiply(num1, num2) {
 
 function divide(num1, num2) {
     if (num1 == 0) return "infinity";
-    return num2 / num1;
+    return Math.round((num2 / num1) * 100) / 100;
 }
 
 function subtract(num1, num2) {
@@ -142,7 +221,7 @@ function subtract(num1, num2) {
 }
 
 function percentage(number) {
-    return number / 100;
+    return Math.round(number) / 100;
 }
 
 /*****************************************************************************************************/

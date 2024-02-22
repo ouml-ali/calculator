@@ -90,9 +90,10 @@ main {
     display: flex;
     flex-direction: column;
     height: 100%;
+    word-break: break-all;
 }
 
-#display-text span {
+#display-text div {
     margin-top: auto;
 }
 

@@ -17,6 +17,7 @@ let infixExpression = '0';
 let result = '';
 let emptyDisplay = true;
 let firstInput = true;
+let percentageActive = false;
 
 const displayContainer = document.getElementById("expression");
 const displayResultContainer = document.getElementById("result");
@@ -51,10 +52,12 @@ function handleClickedButton(event) {
 }
 
 function handleEqualOperator() {
-    if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
-        operate(); 
+    if(!percentageActive) {
+        if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
+            operate(); 
+        }
+        displayFinalResult(); 
     }
-    displayFinalResult(); 
 }
 
 function handleOtherOperators(input) {
@@ -184,6 +187,7 @@ function displayPercentage() {
     result = percentage(result);
     emptyDisplay = true;
     dotButton.disabled = true;
+    percentageActive = true;
     displayContainer.style.fontSize = SMALL_FONT_SIZE;
     displayResultContainer.textContent = "= " + result;
     displayResultContainer.style.fontSize = LARGE_FONT_SIZE;
@@ -220,6 +224,7 @@ function resetCalculator() {
     result = '';
     emptyDisplay = true;
     dotButton.disabled = true;
+    percentageActive = false;
     displayContainer.textContent = '0';
     displayResultContainer.textContent = "";
     resetDisplayTextStyle();

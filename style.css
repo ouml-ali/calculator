@@ -20,6 +20,7 @@ ol, ul {
 img {
     max-width: 100%;
     height: auto;
+    pointer-events: none;
 }
 
 h1, h2 {

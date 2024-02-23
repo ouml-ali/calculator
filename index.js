@@ -1,4 +1,4 @@
-const MAX_CHARACTERS = 60;
+const MAX_CHARACTERS = 15;
 const SECONDARY_COLOR = 'grey';
 const SMALL_FONT_SIZE = '1rem';
 const MEDIUM_FONT_SIZE = '2rem';
@@ -16,7 +16,6 @@ const operatorsPrecedence = {
 let infixExpression = '0';
 let result = '';
 let emptyDisplay = true;
-let canAppendDot = true;
 
 const displayContainer = document.getElementById("expression");
 const displayResultContainer = document.getElementById("result");
@@ -62,6 +61,7 @@ function processAndDisplayInput(input) {
         infixExpression = '';
         resetDisplayTextStyle();
         emptyDisplay = false;
+        dotButton.disabled = false;
     }
 
     if (infixExpression.length <= MAX_CHARACTERS) {
@@ -125,6 +125,9 @@ function convertToPostfixExpression(infixExpression) {
 }
 
 function operate() {
+    if(infixExpression[infixExpression.length - 1].match(operatorsRegex)) {
+        infixExpression = infixExpression.slice(0, infixExpression.length - 1);
+    }
     
     let postfixExpression = convertToPostfixExpression(infixExpression);
 
@@ -155,6 +158,7 @@ function displayPercentage() {
     displayContainer.textContent = result + "%";
     result = percentage(result);
     emptyDisplay = true;
+    dotButton.disabled = true;
     displayContainer.style.fontSize = SMALL_FONT_SIZE;
     displayResultContainer.textContent = "= " + result;
     displayResultContainer.style.fontSize = LARGE_FONT_SIZE;
@@ -164,6 +168,7 @@ function displayPercentage() {
 function displayFinalResult() {
     if(! isNaN(result)) {
         emptyDisplay = true;
+        dotButton.disabled = true;
         displayContainer.style.fontSize = SMALL_FONT_SIZE;
         displayResultContainer.textContent = "= " + result;
         displayResultContainer.style.fontSize = LARGE_FONT_SIZE;
@@ -189,6 +194,7 @@ function resetCalculator() {
     infixExpression = '';
     result = '';
     emptyDisplay = true;
+    dotButton.disabled = true;
     displayContainer.textContent = '0';
     displayResultContainer.textContent = "";
     resetDisplayTextStyle();

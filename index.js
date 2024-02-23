@@ -23,7 +23,7 @@ const displayResultContainer = document.getElementById("result");
 const buttons = document.querySelectorAll('button');
 const dotButton = document.getElementById('dot');
 
-
+dotButton.disabled = true;
 displayContainer.textContent = infixExpression;
 displayContainer.style.fontSize = MEDIUM_FONT_SIZE;
 displayResultContainer.style.color = SECONDARY_COLOR;
@@ -60,27 +60,27 @@ function handleEqualOperator() {
 function handleOtherOperators(input) {
     processAndDisplayInput(input); 
     if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
-    operate(); 
-    if (infixExpression[infixExpression.length - 1] == 0 && infixExpression[infixExpression.length - 2] == '÷' ) {
-        displayFinalResult();
-    } else {
-        displayResult();
-    }
+        operate(); 
+        if (infixExpression[infixExpression.length - 1] == 0 && infixExpression[infixExpression.length - 2] == '÷' ) {
+            displayFinalResult();
+        } else {
+            displayResult();
+        }
     } else{
-    displayResult();
+        displayResult();
     }
 }
 
 function processAndDisplayInput(input) {
     if(emptyDisplay) {
-        infixExpression = '';
+        infixExpression = result.includes('Infinity') ? result : '';
         resetDisplayTextStyle();
         emptyDisplay = false;
         dotButton.disabled = false;
         firstInput = true;
     }
 
-    if (infixExpression.length <= MAX_CHARACTERS) {
+    if (infixExpression.toString().length <= MAX_CHARACTERS) {
 
         let lastIndex = infixExpression.length - 1;
 
@@ -91,15 +91,23 @@ function processAndDisplayInput(input) {
                 infixExpression = infixExpression.slice(0, lastIndex) + input;
             } else if (!firstInput) {
                 infixExpression += input;
-            } else {
+            } else if( infixExpression.length == 0) {
+                displayContainer.textContent = '0';
+                displayResultContainer.textContent = '';
                 return;
+            } else {
+                dotButton.disabled = true;
+                infixExpression += input;
             }
         } else if (input === '.') {
             dotButton.disabled = true;
             infixExpression += input;
         } else {
-            firstInput = false;
-            infixExpression += input
+            if (firstInput) {
+                dotButton.disabled = false; 
+                firstInput = false;
+            }
+            infixExpression += input;
         }
         
         displayContainer.textContent = infixExpression;

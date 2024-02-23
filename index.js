@@ -16,6 +16,7 @@ const operatorsPrecedence = {
 let infixExpression = '0';
 let result = '';
 let emptyDisplay = true;
+let firstInput = true;
 
 const displayContainer = document.getElementById("expression");
 const displayResultContainer = document.getElementById("result");
@@ -42,7 +43,11 @@ buttons.forEach((button) => {
 function handleClickedButton(event) {
     const input = this.textContent;
     switch(input) {
-        case '=': operate(); displayFinalResult();  break;
+        case '=': if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
+                        operate(); 
+                  }
+                  displayFinalResult(); 
+                  break;
         case '%':  displayPercentage(); break;
         case 'AC': resetCalculator(); break;
         default:  processAndDisplayInput(input); 
@@ -56,12 +61,12 @@ function handleClickedButton(event) {
 
 
 function processAndDisplayInput(input) {
-
     if(emptyDisplay) {
         infixExpression = '';
         resetDisplayTextStyle();
         emptyDisplay = false;
         dotButton.disabled = false;
+        firstInput = true;
     }
 
     if (infixExpression.length <= MAX_CHARACTERS) {
@@ -73,13 +78,16 @@ function processAndDisplayInput(input) {
             dotButton.disabled = false;
             if (infixExpression.length > 0 && infixExpression[lastIndex].match(operatorsRegex)) {
                 infixExpression = infixExpression.slice(0,lastIndex) + input;
-            } else {
+            } else if (!firstInput) {
                 infixExpression += input;
+            } else {
+                return;
             }
         } else if (input === '.') {
             dotButton.disabled = true;
             infixExpression += input;
         } else {
+            firstInput = false;
             infixExpression += input
         }
         
@@ -125,10 +133,6 @@ function convertToPostfixExpression(infixExpression) {
 }
 
 function operate() {
-    if(infixExpression[infixExpression.length - 1].match(operatorsRegex)) {
-        infixExpression = infixExpression.slice(0, infixExpression.length - 1);
-    }
-    
     let postfixExpression = convertToPostfixExpression(infixExpression);
 
     // evaluate the postfix expression

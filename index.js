@@ -73,7 +73,7 @@ function handleOtherOperators(input) {
 
 function processAndDisplayInput(input) {
     if(emptyDisplay) {
-        infixExpression = result.includes('Infinity') ? result : '';
+        infixExpression = (!result.match(/Infinity$/)) ? result : '';
         resetDisplayTextStyle();
         emptyDisplay = false;
         dotButton.disabled = false;
@@ -166,7 +166,7 @@ function operate() {
             default : operationStack.push(postfixExpArray[i]); break;
         }
     }
-    result = operationStack.pop();
+    result = '' + operationStack.pop();
     
     
 }

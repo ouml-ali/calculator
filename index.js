@@ -43,22 +43,33 @@ buttons.forEach((button) => {
 function handleClickedButton(event) {
     const input = this.textContent;
     switch(input) {
-        case '=': if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
-                        operate(); 
-                  }
-                  displayFinalResult(); 
-                  break;
+        case '=': handleEqualOperator(); break;
         case '%':  displayPercentage(); break;
         case 'AC': resetCalculator(); break;
-        default:  processAndDisplayInput(input); 
-                  if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
-                    operate(); 
-                  } 
-                  displayResult();
-                  break;
+        default:  handleOtherOperators(input);break;
     }    
 }
 
+function handleEqualOperator() {
+    if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
+        operate(); 
+    }
+    displayFinalResult(); 
+}
+
+function handleOtherOperators(input) {
+    processAndDisplayInput(input); 
+    if (!infixExpression[infixExpression.length - 1].match(operatorsRegex)) { 
+    operate(); 
+    if (infixExpression[infixExpression.length - 1] == 0 && infixExpression[infixExpression.length - 2] == '÷' ) {
+        displayFinalResult();
+    } else {
+        displayResult();
+    }
+    } else{
+    displayResult();
+    }
+}
 
 function processAndDisplayInput(input) {
     if(emptyDisplay) {
@@ -77,7 +88,7 @@ function processAndDisplayInput(input) {
         if (input.match(operatorsRegex) ) {
             dotButton.disabled = false;
             if (infixExpression.length > 0 && infixExpression[lastIndex].match(operatorsRegex)) {
-                infixExpression = infixExpression.slice(0,lastIndex) + input;
+                infixExpression = infixExpression.slice(0, lastIndex) + input;
             } else if (!firstInput) {
                 infixExpression += input;
             } else {
@@ -142,7 +153,7 @@ function operate() {
         switch(postfixExpArray[i]) {
             case '+' : operationStack.push(add(operationStack.pop(), operationStack.pop())); break;
             case '-' : operationStack.push(subtract(operationStack.pop(), operationStack.pop())); break;
-            case '÷' : operationStack.push(divide(operationStack.pop(), operationStack.pop())); break;
+            case '÷' : operationStack.push(divide(operationStack.pop(), operationStack.pop())); break
             case '×' : operationStack.push(multiply(operationStack.pop(), operationStack.pop())); break;
             default : operationStack.push(postfixExpArray[i]); break;
         }
@@ -153,7 +164,9 @@ function operate() {
 }
 
 function displayResult() {
-    if(! isNaN(result)) {
+    if(!isNaN(result) ) { 
+        displayResultContainer.textContent = "= " + result;
+    } else if(result === 'Infinity'){
         displayResultContainer.textContent = "= " + result;
     }    
 }
@@ -170,14 +183,14 @@ function displayPercentage() {
 }
 
 function displayFinalResult() {
-    if(! isNaN(result)) {
+    if(! isNaN(result) || result == 'Infinity') {
         emptyDisplay = true;
         dotButton.disabled = true;
         displayContainer.style.fontSize = SMALL_FONT_SIZE;
         displayResultContainer.textContent = "= " + result;
         displayResultContainer.style.fontSize = LARGE_FONT_SIZE;
         displayResultContainer.style.color = 'black';
-    }    
+    }   
 }
 
 function deleteExpression() {
@@ -222,7 +235,7 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
-    if (num1 == 0) return "infinity";
+    if (num1 === '0') return "Infinity";
     return Math.round((num2 / num1) * 100) / 100;
 }
 
